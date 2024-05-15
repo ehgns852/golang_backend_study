@@ -16,7 +16,7 @@ type Repository struct {
 func NewRepository() *Repository {
 	repositoryInit.Do(func() {
 		repositoryInstance = &Repository{
-			User: NewUserRepository(),
+			User: newUserRepository(),
 		}
 	})
 

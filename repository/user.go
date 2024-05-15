@@ -1,27 +1,57 @@
 package repository
 
-import "golang_backend_study/types"
+import (
+	"golang_backend_study/types"
+	"golang_backend_study/types/errors"
+)
 
 type UserRepository struct {
 	userMap []*types.User
 }
 
-func NewUserRepository() *UserRepository {
+func newUserRepository() *UserRepository {
 	return &UserRepository{
 		userMap: []*types.User{},
 	}
 }
 
-func (u *UserRepository) Create(newUser *types.User) error {
+func (u *UserRepository) Create(user *types.User) error {
+	u.userMap = append(u.userMap, user)
 	return nil
 }
 
-func (u *UserRepository) Update(beforeUser, updatedUser *types.User) error {
-	return nil
+func (u *UserRepository) Update(name string, newAge int64) error {
+	isExisted := false
+
+	for _, user := range u.userMap {
+		if user.Name == name {
+			user.Age = newAge
+			isExisted = true
+			continue
+		}
+	}
+	if !isExisted {
+		return errors.Errorf(errors.NotFoundUser, nil)
+	} else {
+		return nil
+	}
 }
 
-func (u *UserRepository) Delete(user *types.User) error {
-	return nil
+func (u *UserRepository) Delete(userName string) error {
+	isExisted := false
+
+	for index, user := range u.userMap {
+		if user.Name == userName {
+			u.userMap = append(u.userMap[:index], u.userMap[index+1:]...)
+			isExisted = true
+			continue
+		}
+	}
+	if !isExisted {
+		return errors.Errorf(errors.NotFoundUser, nil)
+	} else {
+		return nil
+	}
 }
 
 func (u *UserRepository) Get() []*types.User {
